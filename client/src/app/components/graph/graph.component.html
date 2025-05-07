@@ -1,0 +1,161 @@
+<!-- @format -->
+
+<!-- graph.component.html -->
+<div class="container-fluid h-100">
+  <div class="row h-100">
+    <div class="col-8">
+      <div class="card">
+        <div class="card-header">System Architecture</div>
+        <div class="card-body p-0">
+          <div class="editor-container">
+            <div
+              class="line-numbers"
+              #lineNumbers>
+              <pre [innerHTML]="lineNumbersText"></pre>
+            </div>
+            <div
+              class="backdrop"
+              #backdrop>
+              <pre [innerHTML]="highlightedText"></pre>
+            </div>
+            <textarea
+              #textArea
+              class="custom-area"
+              [(ngModel)]="nodeInput"
+              (input)="onInput()"
+              (keyup)="onKeyup($event)"
+              (keydown)="onKeydown($event)"
+              (scroll)="syncScroll()"></textarea>
+            <ul
+              *ngIf="suggestions.length"
+              class="autocomplete"
+              [style.top.px]="suggestionBox.top"
+              [style.left.px]="suggestionBox.left">
+              <li
+                *ngFor="let suggestion of suggestions; let i = index"
+                [class.active]="i === selectedSuggestion"
+                (mousedown)="applySuggestion(suggestion)">
+                {{ suggestion }}
+              </li>
+            </ul>
+          </div>
+          <br />
+          <div class="d-flex">
+            <div
+              class="d-grid d-md-flex justify-content-md-start btn-group"
+              role="group"
+              aria-label="Graph">
+              <button
+                class="btn btn-primary text-white"
+                (click)="parseDsl()">
+                Generate Graph&nbsp;&nbsp;
+                <fa-icon [icon]="faPenToSquare"></fa-icon>
+              </button>
+              <div
+                class="btn-group"
+                ngbDropdown>
+                <button
+                  class="btn btn-secondary dropdown-toggle text-white"
+                  ngbDropdownToggle>
+                  Applications
+                </button>
+                <div ngbDropdownMenu>
+                  <ng-container *ngFor="let parentNode of graphParentNodes">
+                    <button
+                      ngbDropdownItem
+                      (click)="selectGroup(parentNode)">
+                      {{ parentNode.id }}
+                    </button>
+                  </ng-container>
+                </div>
+              </div>
+              <button
+                id="export-png"
+                (click)="exportAsPng()"
+                class="btn btn-info text-white brn-sm">
+                Export as PNG&nbsp;
+                <fa-icon [icon]="faImage"></fa-icon>
+              </button>
+            </div>
+
+            <div
+              class="d-grid d-md-flex justify-content-md-end ms-auto btn-group"
+              role="group"
+              aria-label="Architecture">
+              <div
+                class="btn-group"
+                ngbDropdown>
+                <button
+                  class="btn btn-secondary dropdown-toggle text-white btn-sm"
+                  ngbDropdownToggle>
+                  Load Architecture
+                </button>
+                <div ngbDropdownMenu>
+                  <ng-container *ngFor="let arch of architectures">
+                    <button
+                      ngbDropdownItem
+                      (click)="loadArchitecture(arch)">
+                      {{ arch.name }}
+                    </button>
+                  </ng-container>
+                </div>
+              </div>
+              <button
+                (click)="saveArchitecture()"
+                class="btn btn-success text-white btn-sm">
+                <span *ngIf="selectedArchitecture"> Update&nbsp; </span>
+                <span *ngIf="!selectedArchitecture"> Save&nbsp; </span>
+                <fa-icon [icon]="faFloppyDisk"></fa-icon>
+              </button>
+              <button
+                [disabled]="!selectedArchitecture"
+                (click)="newArchitecture()"
+                class="btn btn-primary text-white btn-sm">
+                <span> New&nbsp; </span>
+                <fa-icon [icon]="faFileCode"></fa-icon>
+              </button>
+              <button
+                (click)="deleteArchitecture(confirmModal, selectedArchitecture)"
+                [disabled]="!selectedArchitecture"
+                class="btn btn-outline-danger btn-sm">
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
+            </div>
+          </div>
+          <div
+            #cy
+            class="graph-canvas border"
+            style="width: 100%; height: 900px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-4 h-100 d-flex flex-column sticky-top">
+      <app-api-editor [edgeName]="selectedOnGraph"></app-api-editor>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Modal -->
+<ng-template
+  #confirmModal
+  let-modal>
+  <div class="modal-header">
+    <h3 class="modal-title">Confirm Delete</h3>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to delete this item?</p>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-danger text-white btn-sm"
+      (click)="modal.close('yes')">
+      Approve
+    </button>
+    <button
+      class="btn btn-secondary text-white btn-sm"
+      (click)="modal.dismiss('cancel')">
+      Decline
+    </button>
+  </div>
+</ng-template>

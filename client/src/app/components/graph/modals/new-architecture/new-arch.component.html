@@ -1,0 +1,23 @@
+<!-- @format -->
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card mb-2">
+      <div class="card-header">
+        Architecure Name
+        <button
+          class="btn btn-primary text-white btn-sm ms-auto float-end"
+          (click)="saveArchitecture()"
+          [disabled]="!newArchitectureName">
+          Save API Call
+        </button>
+      </div>
+      <div class="card-body">
+        <input
+          class="form-control form-control-sm mb-2"
+          [(ngModel)]="newArchitectureName"
+          placeholder="Architecture Name" />
+      </div>
+    </div>
+  </div>
+</div>

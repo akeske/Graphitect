@@ -1,0 +1,71 @@
+*sqlite
+
+# ---- GLOBAL ----
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+
+# ---- ENV FILES ----
+.env
+.env.*.local
+
+# ---- NODE ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnpm-debug.log
+
+# ---- DIST / BUILD ----
+dist/
+build/
+tmp/
+out/
+
+# ---- ANGULAR ----
+.angular/
+.angular/cache/
+.angular/config.json
+client/.angular/
+
+client/dist/
+client/build/
+client/node_modules/
+client/package-lock.json
+
+# Angular environment files (optional)
+client/src/environments/environment*.ts
+
+# ---- EXPRESS / SERVER ----
+server/node_modules/
+server/dist/
+server/build/
+server/logs/
+server/package-lock.json
+
+# ---- IDEs / EDITORS ----
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ---- OS ----
+*.DS_Store
+*.bak
+*.tmp
+*.orig
+
+# ---- TEST COVERAGE ----
+coverage/
+client/coverage/
+server/coverage/
+
+# ---- OPTIONAL: PM2 Logs ----
+~/.pm2/logs
+
+# ---- OPTIONAL: Docker ----
+*.pid
+docker-compose.override.yml

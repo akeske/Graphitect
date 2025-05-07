@@ -1,0 +1,218 @@
+<!-- @format -->
+
+<div class="col">
+  <div class="row">
+    <div class="col-md-12">
+      <app-status-dashboard
+        [apiId]="newApiCall.id ?? -1"
+        [refreshTrigger]="refreshCount"></app-status-dashboard>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card mb-2">
+        <div class="card-header">
+          API Call Editor
+          <button
+            class="btn btn-primary text-white btn-sm ms-auto float-end"
+            (click)="createApiCall()"
+            [disabled]="!newApiCall.name">
+            Save API Call
+          </button>
+        </div>
+        <div class="card-body">
+          <input
+            class="form-control form-control-sm mb-2"
+            [(ngModel)]="newApiCall.name"
+            placeholder="API Name" />
+          <div class="row">
+            <div class="col-md-3 input-group-sm">
+              <select
+                [ngClass]="sharedService.setVerbClass(newApiCall.method)"
+                class="form-select mb-1"
+                [(ngModel)]="newApiCall.method">
+                <option [ngClass]="sharedService.setVerbClass('GET')">GET</option>
+                <option [ngClass]="sharedService.setVerbClass('POST')">POST</option>
+                <option [ngClass]="sharedService.setVerbClass('PUT')">PUT</option>
+                <option [ngClass]="sharedService.setVerbClass('DELETE')">DELETE</option>
+              </select>
+            </div>
+            <div class="col-md-9">
+              <input
+                class="form-control form-control-sm mb-1"
+                [(ngModel)]="newApiCall.url"
+                (ngModelChange)="updateParams()"
+                placeholder="API URL" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-3 input-group-sm">
+              <select
+                class="form-select mb-1"
+                *ngIf="newApiCall.auth && typeof newApiCall.auth === 'object'"
+                [(ngModel)]="newApiCall.auth.type">
+                <option value="jwt">JWT</option>
+                <option value="apiKey">API Key</option>
+                <option value="oauth">OAuth</option>
+                <option value="basic">Basic</option>
+                <option value="none">None</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <input
+                class="form-control form-control-sm mb-1"
+                *ngIf="newApiCall.auth && typeof newApiCall.auth === 'object'"
+                [(ngModel)]="newApiCall.auth.header"
+                [hidden]="authStringPlaceholder(newApiCall.auth.type).header === undefined"
+                [placeholder]="authStringPlaceholder(newApiCall.auth.type).header" />
+            </div>
+            <div class="col-md-5">
+              <input
+                class="form-control form-control-sm mb-1"
+                *ngIf="newApiCall.auth && typeof newApiCall.auth === 'object'"
+                [(ngModel)]="newApiCall.auth.value"
+                [hidden]="authStringPlaceholder(newApiCall.auth.type).value === undefined"
+                [placeholder]="authStringPlaceholder(newApiCall.auth.type).value" />
+            </div>
+          </div>
+
+          <textarea
+            #apiInput
+            class="form-control form-control-sm p-2 border rounded font-mono"
+            rows="7"
+            [(ngModel)]="newApiCall.body"
+            (input)="onUserTyping()"
+            placeholder="Request Body (JSON, XML...)"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Params -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-2">
+        <div class="card-header">
+          Params
+          <button
+            (click)="addHeaderParam('param')"
+            class="btn btn-outline-success btn-sm ms-auto float-end">
+            <fa-icon [icon]="faPlus"></fa-icon>
+          </button>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Key</th>
+                <th scope="col">Value</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container
+                id="param"
+                *ngFor="let param of newApiCall.params; let i = index">
+                <tr>
+                  <td>
+                    <input
+                      (ngModelChange)="updateFullUrl()"
+                      [(ngModel)]="param.key"
+                      placeholder="Key"
+                      class="form-control form-control-sm" />
+                  </td>
+                  <td>
+                    <input
+                      (ngModelChange)="updateFullUrl()"
+                      [(ngModel)]="param.value"
+                      placeholder="Value"
+                      class="form-control form-control-sm" />
+                  </td>
+                  <td>
+                    <button
+                      (click)="remoreHeaderParam('param', i)"
+                      class="btn btn-outline-danger btn-sm ms-auto">
+                      <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Headers -->
+    <div class="col-md-6">
+      <div class="card mb-2">
+        <div class="card-header">
+          Headers
+          <button
+            (click)="addHeaderParam('header')"
+            class="btn btn-outline-success btn-sm ms-auto float-end">
+            <fa-icon [icon]="faPlus"></fa-icon>
+          </button>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Key</th>
+                <th scope="col">Value</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container
+                id="info"
+                *ngFor="let inf of newApiCall.headers; let i = index">
+                <tr>
+                  <td>
+                    <input
+                      [(ngModel)]="inf.key"
+                      placeholder="Key"
+                      class="form-control form-control-sm" />
+                  </td>
+                  <td>
+                    <input
+                      [(ngModel)]="inf.value"
+                      placeholder="Value"
+                      class="form-control form-control-sm" />
+                  </td>
+                  <td>
+                    <button
+                      (click)="remoreHeaderParam('header', i)"
+                      class="btn btn-outline-danger btn-sm ms-auto">
+                      <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Response -->
+  <div class="row">
+    <div class="col-md-12">
+      <div
+        class="card mb-2"
+        *ngIf="response">
+        <div
+          class="card-header"
+          [ngClass]="responceClass(response)">
+          Response
+          <span class="badge badge-pill badge-secondary">{{ responseObj.status }}</span>
+        </div>
+        <div class="card-body">
+          <pre>{{ response }}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

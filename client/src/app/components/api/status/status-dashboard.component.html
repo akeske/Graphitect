@@ -1,0 +1,18 @@
+<!-- @format -->
+
+<div class="status-bar-wrapper">
+  <div class="status-bar">
+    <div
+      *ngFor="let status of statuses"
+      class="status-bar-item"
+      [ngClass]="{
+        up: status.status === 'up',
+        down: status.status === 'down',
+      }"
+      [title]="status.lastChecked + ' - ' + status.status"></div>
+  </div>
+  <div class="status-labels">
+    <span>Past</span>
+    <span class="ms-auto">Now</span>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+/** @format */
+
+.status-bar-wrapper {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.status-bar {
+  text-align: right; /* Optional: aligns text to the right */
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 4px;
+  margin-bottom: 8px;
+  overflow-x: auto;
+}
+
+.status-bar-item {
+  width: 8px;
+  height: 32px;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+.status-bar-item.up {
+  background-color: #22c55e; /* Tailwind green-500 */
+}
+
+.status-bar-item.down {
+  background-color: #ef4444; /* Tailwind red-500 */
+}
+
+.status-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #888;
+}

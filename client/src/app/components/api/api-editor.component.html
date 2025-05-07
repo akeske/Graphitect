@@ -1,0 +1,118 @@
+<!-- @format -->
+
+<ng-container *ngIf="edgeName">
+  <!-- Workspaces -->
+  <div class="card">
+    <div class="card-header">
+      Workspaces
+      <button
+        class="btn btn-primary btn-sm ms-auto text-white float-end"
+        (click)="createWorkspace()"
+        [disabled]="!newWorkspace.name">
+        Add Workspace
+        <fa-icon [icon]="faPlus"></fa-icon>
+      </button>
+    </div>
+    <div class="card-body">
+      <p>
+        <span *ngIf="workspaces[0] && workspaces[0].target">
+          Edge <strong>{{ workspaces[0].source }} -> {{ workspaces[0].target }}</strong>
+        </span>
+        <span *ngIf="workspaces[0] && !workspaces[0].target">
+          Node <strong>{{ workspaces[0].source }}</strong></span
+        >
+      </p>
+      <input
+        class="form-control form-control-sm mb-1"
+        [(ngModel)]="newWorkspace.name"
+        placeholder="Workspace name" />
+      <ng-container *ngFor="let ws of workspaces">
+        <ul class="list-group list-group-flush">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+            (click)="selectWorkspace(ws.id ?? -1)"
+            [ngStyle]="{
+              backgroundColor: selectedWorkspaceId === ws.id ? '#5a9bd4' : '',
+              color: selectedWorkspaceId === ws.id ? '#fff' : '',
+            }">
+            <span class="w-100">{{ ws.workspace }} </span>
+            <button
+              (click)="ws.id !== undefined && deleteWorkspace(confirmModal, ws.id)"
+              class="btn btn-outline-danger btn-sm ms-auto">
+              <fa-icon [icon]="faTrash"></fa-icon>
+            </button>
+          </li>
+        </ul>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+<br />
+<ng-container
+  class="row"
+  *ngIf="edgeName">
+  <!-- API Calls -->
+  <div class="card">
+    <div class="card-header">
+      API Calls
+      <button
+        class="btn btn-primary btn-sm ms-auto text-white float-end"
+        (click)="openModal(-1)"
+        [disabled]="!selectedWorkspaceId">
+        Add API
+        <fa-icon [icon]="faPlus"></fa-icon>
+      </button>
+    </div>
+    <div class="card-body">
+      <ul class="list-group list-group-flush">
+        <li
+          *ngFor="let api of apiCalls"
+          class="list-group-item d-flex justify-content-between align-items-center">
+          <span
+            class="w-100"
+            (click)="openModal(api.id ?? -1)"
+            [ngStyle]="{
+              backgroundColor: newApiCall.id === api.id ? '#5a9bd4' : '',
+              color: newApiCall.id === api.id ? '#fff' : '',
+            }">
+            <strong [ngClass]="sharedService.setVerbClass(api.method)">{{ api.method }}</strong> - {{ api.name }}
+          </span>
+          <button
+            (click)="api.id !== undefined && deleteApiCall(api.id)"
+            class="btn btn-outline-danger btn-sm ms-auto">
+            <fa-icon [icon]="faTrash"></fa-icon>
+          </button>
+          <button
+            class="btn btn-sm btn-outline-primary ms-auto"
+            (click)="api.id !== undefined && testCall(api.id)">
+            <fa-icon [icon]="faVialCircleCheck"></fa-icon>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</ng-container>
+
+<!-- Bootstrap Modal -->
+<ng-template
+  #confirmModal
+  let-modal>
+  <div class="modal-header">
+    <h3 class="modal-title">Confirm Delete</h3>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to delete this item?</p>
+  </div>
+  <div class="modal-footer">
+    <button
+      class="btn btn-danger text-white btn-sm"
+      (click)="modal.close('yes')">
+      Approve
+    </button>
+    <button
+      class="btn btn-secondary text-white btn-sm"
+      (click)="modal.dismiss('cancel')">
+      Decline
+    </button>
+  </div>
+</ng-template>
