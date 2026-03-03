@@ -51,17 +51,38 @@ participant Imperva(WAF Imperva):LandingZone(Security)->imperva
 participant AppGw(Application Gateway):LandingZone->appgw
 participant Firewall:LandingZone->fw
 
-application Enterprise App:blue
-  participant WebApp(Web App)->appserv
-  participant APIM(Api Management)->apim
-  participant WebAPI(Web API)->container
+application Confluent
+ participant Sink
+ participant SObject
 
-  User->Imperva
-  Imperva->AppGw
-  AppGw->Firewall
-  Firewall->WebApp
-  WebApp->APIM:Request API protected by Api Management
-  APIM->WebAPI:Request API
+application Digital Acquisition:red
+ participant DigitalAcquisition(Digital Acquisition Web App)->appserv
+ participant APIM(Api Management)->apim
+ participant LEADManagentAPI(LEAD Managent API)->container
+	
+ User->Imperva
+ Imperva->AppGw
+ AppGw->Firewall
+ Firewall->DigitalAcquisition
+ DigitalAcquisition->APIM:Search Coverage
+ DigitalAcquisition->LEADManagentAPI:Lead request
+
+application Notification
+ participant BRM
+ participant DMS
+ participant SF
+ participant Eventhub
+ participant NotificationTS
+ participant MSTAT
+ participant MarkeingCloud
+
+ BRM->DMS
+ DMS->Sink
+ SObject->SF
+ SF->Eventhub
+ Eventhub->NotificationTS
+ NotificationTS->MSTAT
+ Eventhub->MarkeingCloud
 
   `;
 
